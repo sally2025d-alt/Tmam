@@ -1,0 +1,721 @@
+<!DOCTYPE html>  <html lang="ar" dir="rtl">  
+<head>  
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f2f3f">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">  
+    <title>نظام الحضور - تقرير التمام</title>  
+    <!-- Font Awesome 6 -->  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">  
+    <style>  
+        * {  
+            margin: 0;  
+            padding: 0;  
+            box-sizing: border-box;  
+            -webkit-tap-highlight-color: transparent;  
+        }  body {  
+        background: #f4f7fc;  
+        font-family: 'Segoe UI', system-ui, -apple-system, 'Tahoma', sans-serif;  
+        padding: 12px;  
+        min-height: 100vh;  
+    }  
+
+    .container {  
+        max-width: 800px;  
+        margin: 0 auto;  
+        background: #ffffff;  
+        border-radius: 28px;  
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);  
+        overflow: hidden;  
+    }  
+
+    .app-header {  
+        background: #0f2f3f;  
+        padding: 16px 20px;  
+        color: white;  
+    }  
+
+    h1 {  
+        font-size: 1.5rem;  
+        font-weight: 600;  
+        display: flex;  
+        align-items: center;  
+        justify-content: space-between;  
+        gap: 10px;  
+        flex-wrap: wrap;  
+    }  
+
+    h1 span:first-child {  
+        display: flex;  
+        align-items: center;  
+        gap: 10px;  
+    }  
+
+    h1 i {  
+        background: #ffb244;  
+        padding: 8px;  
+        border-radius: 40px;  
+        color: #0f2f3f;  
+        font-size: 1.2rem;  
+    }  
+
+    .date-badge {  
+        background: rgba(255, 255, 255, 0.12);  
+        padding: 6px 12px;  
+        border-radius: 40px;  
+        font-size: 0.75rem;  
+        font-weight: normal;  
+        font-family: monospace;  
+    }  
+
+    .stats-grid {  
+        display: grid;  
+        grid-template-columns: repeat(2, 1fr);  
+        gap: 12px;  
+        padding: 20px 16px 16px;  
+        background: #ffffff;  
+        border-bottom: 1px solid #eef2f5;  
+    }  
+
+    .stat-card {  
+        background: #f9fbfd;  
+        border-radius: 24px;  
+        padding: 12px 8px;  
+        text-align: center;  
+        border: 1px solid #eef2f8;  
+    }  
+
+    .stat-card i {  
+        font-size: 1.7rem;  
+        margin-bottom: 6px;  
+        display: inline-block;  
+    }  
+
+    .stat-number {  
+        font-size: 1.7rem;  
+        font-weight: 800;  
+        color: #1a4c6e;  
+    }  
+
+    .stat-label {  
+        font-size: 0.7rem;  
+        color: #5d7184;  
+        font-weight: 500;  
+    }  
+
+    .action-bar {  
+        padding: 16px;  
+        background: #ffffff;  
+        display: flex;  
+        flex-direction: column;  
+        gap: 12px;  
+        border-bottom: 1px solid #eef2f8;  
+    }  
+
+    .input-group {  
+        display: flex;  
+        flex-direction: column;  
+        gap: 5px;  
+    }  
+
+    .input-group label {  
+        font-size: 0.7rem;  
+        font-weight: 700;  
+        color: #3b6e8f;  
+        text-transform: uppercase;  
+        letter-spacing: 0.4px;  
+    }  
+
+    .input-group input,  
+    .input-group select {  
+        padding: 14px 14px;  
+        border: 1.5px solid #e2e9f0;  
+        border-radius: 30px;  
+        font-size: 0.9rem;  
+        font-family: inherit;  
+        background: #ffffff;  
+        width: 100%;  
+    }  
+
+    .input-group input:focus,  
+    .input-group select:focus {  
+        outline: none;  
+        border-color: #ffb244;  
+        box-shadow: 0 0 0 3px rgba(255, 178, 68, 0.2);  
+    }  
+
+    .buttons-row {  
+        display: flex;  
+        flex-wrap: wrap;  
+        gap: 10px;  
+        margin-top: 6px;  
+    }  
+
+    .btn {  
+        border: none;  
+        padding: 12px 14px;  
+        border-radius: 50px;  
+        font-weight: 600;  
+        font-size: 0.85rem;  
+        display: inline-flex;  
+        align-items: center;  
+        justify-content: center;  
+        gap: 8px;  
+        cursor: pointer;  
+        transition: 0.2s;  
+        background: #f2f5f9;  
+        color: #1f4e78;  
+        flex: 1 1 auto;  
+        min-width: 100px;  
+    }  
+
+    .btn-primary {  
+        background: #0f2f3f;  
+        color: white;  
+    }  
+
+    .btn-primary:active {  
+        transform: scale(0.97);  
+    }  
+
+    .btn-outline {  
+        background: white;  
+        border: 1px solid #d0dde8;  
+    }  
+
+    .btn-danger {  
+        background: #fff3f0;  
+        color: #c0392b;  
+        border: 1px solid #ffdbd4;  
+    }  
+
+    .table-wrapper {  
+        overflow-x: auto;  
+        padding: 0 12px 24px 12px;  
+        -webkit-overflow-scrolling: touch;  
+    }  
+
+    .employee-table {  
+        width: 100%;  
+        border-collapse: separate;  
+        border-spacing: 0 12px;  
+        min-width: 560px;  
+    }  
+
+    .employee-table thead th {  
+        background: #f0f4f9;  
+        color: #1f4970;  
+        padding: 12px 10px;  
+        font-weight: 700;  
+        font-size: 0.8rem;  
+        border-radius: 20px;  
+        text-align: center;  
+    }  
+
+    .employee-table tbody tr {  
+        background: #ffffff;  
+        border-radius: 24px;  
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);  
+    }  
+
+    .employee-table td {  
+        padding: 10px 8px;  
+        vertical-align: middle;  
+        background: #fff;  
+        text-align: center;  
+    }  
+
+    .inline-input {  
+        width: 100%;  
+        padding: 12px 8px;  
+        border: 1px solid #e2eaf1;  
+        border-radius: 32px;  
+        font-size: 0.8rem;  
+        text-align: center;  
+        background: #fefefe;  
+    }  
+
+    .inline-input:focus {  
+        border-color: #ffb244;  
+        outline: none;  
+        background: #fffaf0;  
+    }  
+
+    .status-select {  
+        width: 100%;  
+        padding: 10px 6px;  
+        border-radius: 40px;  
+        font-weight: 500;  
+        font-size: 0.8rem;  
+        background: #fafcfd;  
+        border: 1px solid #dde4ec;  
+        cursor: pointer;  
+        text-align: center;  
+    }  
+
+    .status-select.present {  
+        background: #e2f6e9;  
+        color: #1f6e43;  
+        border-color: #c0e0cd;  
+    }  
+
+    .status-select.vacation {  
+        background: #fff1e0;  
+        color: #b45f1b;  
+        border-color: #ffe2c2;  
+    }  
+
+    .status-select.absent {  
+        background: #ffeae8;  
+        color: #bc2c1e;  
+        border-color: #fccfc9;  
+    }  
+
+    .delete-btn {  
+        background: none;  
+        border: none;  
+        font-size: 1.2rem;  
+        color: #c23d2b;  
+        cursor: pointer;  
+        padding: 10px 12px;  
+        border-radius: 50px;  
+        min-width: 44px;  
+    }  
+
+    .delete-btn:active {  
+        background: #fee2de;  
+        transform: scale(0.94);  
+    }  
+
+    .footer-actions {  
+        padding: 8px 16px 20px;  
+        text-align: center;  
+        font-size: 0.7rem;  
+        color: #6c859e;  
+        border-top: 1px solid #edf2f7;  
+    }  
+
+    @media (min-width: 540px) {  
+        .action-bar {  
+            flex-direction: row;  
+            flex-wrap: wrap;  
+            align-items: flex-end;  
+        }  
+        .input-group {  
+            flex: 1 1 160px;  
+        }  
+        .buttons-row {  
+            flex: 2 1 auto;  
+            justify-content: flex-end;  
+        }  
+        .stats-grid {  
+            grid-template-columns: repeat(4, 1fr);  
+        }  
+    }  
+
+    @media (max-width: 480px) {  
+        body {  
+            padding: 8px;  
+        }  
+        h1 {  
+            font-size: 1.2rem;  
+        }  
+        .stat-number {  
+            font-size: 1.4rem;  
+        }  
+        .btn {  
+            padding: 10px 12px;  
+            font-size: 0.8rem;  
+        }  
+    }  
+
+    @media print {  
+        body {  
+            background: white;  
+            padding: 0;  
+        }  
+        .no-print, .action-bar, .footer-actions, .delete-btn, .btn, .app-header .date-badge {  
+            display: none !important;  
+        }  
+        .print-header {  
+            display: block !important;  
+            text-align: center;  
+            margin-bottom: 20px;  
+            border-bottom: 2px solid #0a2b3e;  
+            padding-bottom: 10px;  
+        }  
+        .stats-grid {  
+            display: flex;  
+            background: #f8fafc;  
+            border: 1px solid #ccc;  
+            border-radius: 16px;  
+            margin: 10px 0;  
+            padding: 10px;  
+        }  
+        .employee-table {  
+            border-collapse: collapse;  
+            width: 100%;  
+        }  
+        .employee-table thead th {  
+            background: #0a2b3e !important;  
+            color: white !important;  
+        }  
+        .employee-table td {  
+            border: 1px solid #ccc;  
+        }  
+        .inline-input, .status-select {  
+            border: none !important;  
+            background: transparent !important;  
+            padding: 0 !important;  
+            font: inherit !important;  
+            text-align: center;  
+        }  
+        .employee-table th:last-child,  
+        .employee-table td:last-child {  
+            display: none;  
+        }  
+        .print-footer {  
+            display: block !important;  
+            text-align: center;  
+            margin-top: 20px;  
+            border-top: 1px solid #ddd;  
+            padding-top: 10px;  
+        }  
+    }  
+
+    .print-header, .print-footer {  
+        display: none;  
+    }  
+</style>
+
+</head>  
+<body>  
+<div class="container">  
+    <div class="app-header">  
+        <h1>  
+            <span><i class="fas fa-clipboard-list"></i> تقرير التمام</span>  
+            <span class="date-badge" id="dateBar"></span>  
+        </h1>  
+    </div>  <div class="print-header">  
+    <h2>تقرير التمام - الفصيل الطبي اللواء ٤٣ عمالقه</h2>  
+    <span id="printDate"></span>  
+</div>  
+
+<div class="stats-grid" id="statsContainer"></div>  
+
+<div class="action-bar no-print">  
+    <div class="input-group">  
+        <label><i class="fas fa-user"></i> الاسم الكامل</label>  
+        <input type="text" id="newName" placeholder="مثال: خالد علي سالم">  
+    </div>  
+    <div class="input-group">  
+        <label><i class="fas fa-map-marker-alt"></i> الموقع</label>  
+        <input type="text" id="newLocation" placeholder="عدن - خور مكسر">  
+    </div>  
+    <div class="input-group">  
+        <label><i class="fas fa-calendar-check"></i> الحالة</label>  
+        <select id="newStatus">  
+            <option value="مداوم">مداوم</option>  
+            <option value="إجازة">إجازة</option>  
+            <option value="غياب">غياب</option>  
+        </select>  
+    </div>  
+    <div class="buttons-row">  
+        <button class="btn btn-primary" id="addBtn"><i class="fas fa-plus-circle"></i> إضافة</button>  
+        <button class="btn btn-outline" id="exportExcelBtn"><i class="fas fa-file-excel"></i> Excel</button>  
+        <button class="btn btn-outline" id="printBtn"><i class="fas fa-print"></i> طباعة</button>  
+        <button class="btn btn-outline" id="resetDefaultBtn"><i class="fas fa-undo-alt"></i> إعادة</button>  
+        <button class="btn btn-danger" id="clearAllBtn"><i class="fas fa-trash-alt"></i> مسح</button>  
+    </div>  
+</div>  
+
+<div class="table-wrapper">  
+    <table class="employee-table" id="employeeTable">  
+        <thead>  
+            <tr><th><i class="fas fa-user-circle"></i> الاسم</th>  
+                <th><i class="fas fa-location-dot"></i> الموقع</th>  
+                <th><i class="fas fa-toggle-on"></i> الحالة</th>  
+                <th class="no-print"><i class="fas fa-ellipsis-h"></i> حذف</th>  
+            </tr>  
+        </thead>  
+        <tbody id="tableBody"></tbody>  
+    </table>  
+</div>  
+<div class="footer-actions no-print">  
+    <i class="fas fa-edit"></i> اضغط على أي حقل لتعديله مباشرة - حفظ تلقائي  
+</div>  
+<div class="print-footer">قائد الفصيل الطبي / يسلم سلام</div>
+
+</div>  <script>  
+    // البيانات الافتراضية كما وردت في المطلب (12 موظفاً)  
+    const DEFAULT_DATA = [  
+        { name: "درويش رياض صالح قاسم درويش", status: "مداوم", location: "عدن - بئر أحمد" },  
+        { name: "محمد مهيوب احمد غالب", status: "مداوم", location: "عدن - بئر أحمد" },  
+        { name: "يسلم سلام ثابت ناصر", status: "مداوم", location: "عدن - بئر أحمد" },  
+        { name: "احمد مختار احمد زين", status: "مداوم", location: "عدن - التواهي" },  
+        { name: "نبيل محسن حسين شايف", status: "مداوم", location: "عدن - التواهي" },  
+        { name: "شايف جمال شايف سبيت", status: "مداوم", location: "لحج - الرباط" },  
+        { name: "وجدي صالح قاسم محمد", status: "مداوم", location: "لحج - الرباط" },  
+        { name: "ماهر فضل البكري", status: "مداوم", location: "لحج - الرباط" },  
+        { name: "عيدروس حسن محمد", status: "مداوم", location: "لحج - الرباط" },  
+        { name: "هايل سعيد هيثم", status: "إجازة", location: "-" },  
+        { name: "محضار علي مثى", status: "إجازة", location: "-" },  
+        { name: "امجد عبدالحميد طاهر شعفل", status: "إجازة", location: "-" }  
+    ];  
+  
+    let employees = [];  
+  
+    // تحميل البيانات مع التحقق من صحتها  
+    function loadData() {  
+        const saved = localStorage.getItem('tamam_pro_data');  
+        if (saved) {  
+            try {  
+                const parsed = JSON.parse(saved);  
+                // التأكد أن البيانات عبارة عن مصفوفة غير فارغة (أو على الأقل تحتوي على عناصر صحيحة)  
+                if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].name) {  
+                    employees = parsed;  
+                } else {  
+                    // البيانات المحفوظة غير صالحة -> نستخدم الافتراضية  
+                    employees = JSON.parse(JSON.stringify(DEFAULT_DATA));  
+                }  
+            } catch(e) {  
+                employees = JSON.parse(JSON.stringify(DEFAULT_DATA));  
+            }  
+        } else {  
+            // لا يوجد حفظ مسبق -> استخدام الافتراضية  
+            employees = JSON.parse(JSON.stringify(DEFAULT_DATA));  
+        }  
+        // إذا كانت المصفوفة فارغة بعد كل هذا (حالة نادرة) نضبط الافتراضية  
+        if (!employees.length) {  
+            employees = JSON.parse(JSON.stringify(DEFAULT_DATA));  
+        }  
+    }  
+  
+    function persistData() {  
+        localStorage.setItem('tamam_pro_data', JSON.stringify(employees));  
+    }  
+  
+    function updateStatistics() {  
+        const total = employees.length;  
+        const present = employees.filter(emp => emp.status === "مداوم").length;  
+        const leave = employees.filter(emp => emp.status === "إجازة").length;  
+        const absent = employees.filter(emp => emp.status === "غياب").length;  
+        const statsHtml = `  
+            <div class="stat-card"><i class="fas fa-users" style="color:#1f6392;"></i><div class="stat-number">${total}</div><div class="stat-label">إجمالي القوة</div></div>  
+            <div class="stat-card"><i class="fas fa-check-circle" style="color:#2b7a3e;"></i><div class="stat-number">${present}</div><div class="stat-label">مداوم</div></div>  
+            <div class="stat-card"><i class="fas fa-umbrella-beach" style="color:#e68a2e;"></i><div class="stat-number">${leave}</div><div class="stat-label">إجازة</div></div>  
+            <div class="stat-card"><i class="fas fa-times-circle" style="color:#c7362b;"></i><div class="stat-number">${absent}</div><div class="stat-label">غياب</div></div>  
+        `;  
+        document.getElementById('statsContainer').innerHTML = statsHtml;  
+    }  
+  
+    function renderTable() {  
+        const tbody = document.getElementById('tableBody');  
+        if (!tbody) return;  
+        tbody.innerHTML = '';  
+  
+        employees.forEach((emp, idx) => {  
+            const row = tbody.insertRow();  
+  
+            // عمود الاسم  
+            const cellName = row.insertCell(0);  
+            const nameInput = document.createElement('input');  
+            nameInput.type = 'text';  
+            nameInput.value = emp.name;  
+            nameInput.className = 'inline-input';  
+            nameInput.placeholder = 'الاسم الكامل';  
+            nameInput.addEventListener('change', function(e) {  
+                let newVal = e.target.value.trim();  
+                if (newVal === "") {  
+                    alert("لا يمكن ترك الاسم فارغاً");  
+                    nameInput.value = emp.name;  
+                    return;  
+                }  
+                employees[idx].name = newVal;  
+                persistData();  
+                updateStatistics();  
+            });  
+            cellName.appendChild(nameInput);  
+  
+            // عمود الموقع  
+            const cellLocation = row.insertCell(1);  
+            const locationInput = document.createElement('input');  
+            locationInput.type = 'text';  
+            locationInput.value = emp.location;  
+            locationInput.className = 'inline-input';  
+            locationInput.placeholder = 'الموقع';  
+            locationInput.addEventListener('change', function(e) {  
+                employees[idx].location = e.target.value || '-';  
+                persistData();  
+                updateStatistics();  
+            });  
+            cellLocation.appendChild(locationInput);  
+  
+            // عمود الحالة  
+            const cellStatus = row.insertCell(2);  
+            const statusSelect = document.createElement('select');  
+            statusSelect.className = 'status-select';  
+            const options = ['مداوم', 'إجازة', 'غياب'];  
+            options.forEach(opt => {  
+                const optEl = document.createElement('option');  
+                optEl.value = opt;  
+                optEl.textContent = opt;  
+                if (emp.status === opt) optEl.selected = true;  
+                statusSelect.appendChild(optEl);  
+            });  
+  
+            const updateSelectStyle = () => {  
+                statusSelect.classList.remove('present', 'vacation', 'absent');  
+                if (statusSelect.value === 'مداوم') statusSelect.classList.add('present');  
+                else if (statusSelect.value === 'إجازة') statusSelect.classList.add('vacation');  
+                else if (statusSelect.value === 'غياب') statusSelect.classList.add('absent');  
+            };  
+            updateSelectStyle();  
+            statusSelect.addEventListener('change', function() {  
+                employees[idx].status = statusSelect.value;  
+                persistData();  
+                updateStatistics();  
+                updateSelectStyle();  
+            });  
+            cellStatus.appendChild(statusSelect);  
+  
+            // عمود الحذف  
+            const cellActions = row.insertCell(3);  
+            cellActions.className = 'no-print';  
+            const delBtn = document.createElement('button');  
+            delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';  
+            delBtn.className = 'delete-btn';  
+            delBtn.title = 'حذف';  
+            delBtn.addEventListener('click', () => {  
+                if (confirm(`حذف "${employees[idx].name}"؟`)) {  
+                    employees.splice(idx, 1);  
+                    persistData();  
+                    renderTable();  
+                    updateStatistics();  
+                }  
+            });  
+            cellActions.appendChild(delBtn);  
+        });  
+        updateStatistics();  
+    }  
+  
+    // إضافة موظف جديد  
+    function addNewEmployee() {  
+        const nameField = document.getElementById('newName');  
+        const locField = document.getElementById('newLocation');  
+        const statusField = document.getElementById('newStatus');  
+        let newName = nameField.value.trim();  
+        if (!newName) {  
+            alert("يرجى إدخال اسم الموظف");  
+            return;  
+        }  
+        let newLoc = locField.value.trim() || "-";  
+        const newSt = statusField.value;  
+        employees.push({ name: newName, status: newSt, location: newLoc });  
+        persistData();  
+        renderTable();  
+        nameField.value = "";  
+        locField.value = "";  
+        statusField.value = "مداوم";  
+    }  
+  
+    // إعادة تعيين إلى القائمة الافتراضية  
+    function resetToDefault() {  
+        if (confirm("سيتم استعادة القائمة الافتراضية. هل تريد المتابعة؟")) {  
+            employees = JSON.parse(JSON.stringify(DEFAULT_DATA));  
+            persistData();  
+            renderTable();  
+        }  
+    }  
+  
+    // مسح جميع البيانات (مع التحقق)  
+    function clearAllData() {  
+        if (employees.length === 0) {  
+            alert("القائمة فارغة بالفعل.");  
+            return;  
+        }  
+        if (confirm("⚠️ تحذير: سيتم حذف جميع الموظفين بشكل نهائي. هل أنت متأكد؟")) {  
+            employees = [];  
+            persistData();  
+            renderTable();  
+        }  
+    }  
+  
+    // تصدير Excel  
+    function exportToExcel() {  
+        let htmlContent = `  
+        <html>  
+        <head><meta charset="UTF-8"><title>تقرير التمام</title>  
+        <style>th,td{border:1px solid #888;padding:8px;text-align:center;} th{background:#1F4E78;color:white;}</style>  </head>  
+    <body dir="rtl">  
+        <h2>تقرير التمام والحضور</h2>  
+        <p>التاريخ: ${new Date().toLocaleDateString('ar-EG')}</p>  
+        <table><thead><tr><th>الاسم</th><th>الموقع</th><th>الحالة</th></tr></thead><tbody>`;  
+    employees.forEach(emp => {  
+        htmlContent += `<tr><td>${escapeHtml(emp.name)}</td><td>${escapeHtml(emp.location)}</td><td>${escapeHtml(emp.status)}</td></tr>`;  
+    });  
+    htmlContent += `</tbody></table>  
+        <p>الإجمالي: ${employees.length} | مداوم: ${employees.filter(e=>e.status==='مداوم').length} | إجازة: ${employees.filter(e=>e.status==='إجازة').length} | غياب: ${employees.filter(e=>e.status==='غياب').length}</p>  
+    </body></html>`;  
+    const blob = new Blob(["\uFEFF" + htmlContent], { type: "application/vnd.ms-excel" });  
+    const link = document.createElement('a');  
+    link.href = URL.createObjectURL(blob);  
+    link.download = "تقرير_الحضور.xls";  
+    link.click();  
+    URL.revokeObjectURL(link.href);  
+}  
+
+function escapeHtml(str) {  
+    if (!str) return '';  
+    return str.replace(/[&<>]/g, function(m) {  
+        if (m === '&') return '&amp;';  
+        if (m === '<') return '&lt;';  
+        if (m === '>') return '&gt;';  
+        return m;  
+    });  
+}  
+
+function printPage() {  
+    const printSpan = document.getElementById('printDate');  
+    if (printSpan) {  
+        printSpan.innerText = new Date().toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });  
+    }  
+    window.print();  
+}  
+
+function setDateBar() {  
+    const today = new Date();  
+    const formatted = today.toLocaleDateString('ar-EG', { weekday:'long', year:'numeric', month:'long', day:'numeric' });  
+    document.getElementById('dateBar').innerHTML = `<i class="far fa-calendar-alt"></i> ${formatted}`;  
+}  
+
+function bindEvents() {  
+    document.getElementById('addBtn').addEventListener('click', addNewEmployee);  
+    document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);  
+    document.getElementById('printBtn').addEventListener('click', printPage);  
+    document.getElementById('resetDefaultBtn').addEventListener('click', resetToDefault);  
+    document.getElementById('clearAllBtn').addEventListener('click', clearAllData);  
+}  
+
+function init() {  
+    loadData();  
+    setDateBar();  
+    bindEvents();  
+    renderTable();  
+}  
+
+init();
+
+</script>  
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(() => console.log("PWA جاهز"))
+      .catch(err => console.log(err));
+  });
+}
+</script>
+</body>  
+</html>  
